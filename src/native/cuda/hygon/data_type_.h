@@ -11,13 +11,13 @@
 
 namespace infini::rt {
 
-using cuda_bfloat16 = nv_bfloat16;
+using cuda_bfloat16 = __nv_bfloat16;
 
-using cuda_bfloat162 = nv_bfloat162;
+using cuda_bfloat162 = __nv_bfloat162;
 
 template <>
 struct TypeMap<Device::Type::kHygon, DataType::kFloat16> {
-  using type = half;
+  using type = __half;
 };
 
 template <>
