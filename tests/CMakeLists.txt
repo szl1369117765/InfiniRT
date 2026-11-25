@@ -82,6 +82,7 @@ if(WITH_ILUVATAR)
 endif()
 
 if(WITH_HYGON)
+    add_infini_rt_test(test_hygon_stream_priority test_stream_priority.cc)
     set(INFINI_RT_TEST_HAS_RUNTIME_BACKEND ON)
     add_infini_rt_backend_runtime_test(
         HYGON infini::rt::Device::Type::kHygon

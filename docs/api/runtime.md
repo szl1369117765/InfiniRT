@@ -105,6 +105,11 @@ return a non-success status. See [Backends](../backends.md).
 
 ```cpp
 runtime::Error StreamCreate(runtime::Stream* stream);
+runtime::Error DeviceGetStreamPriorityRange(int* least_priority,
+                                            int* greatest_priority);
+runtime::Error StreamCreateWithPriority(runtime::Stream* stream,
+                                        unsigned int flags, int priority);
+runtime::Error StreamGetPriority(runtime::Stream stream, int* priority);
 runtime::Error StreamDestroy(runtime::Stream stream);
 runtime::Error StreamSynchronize(runtime::Stream stream);
 runtime::Error StreamWaitEvent(runtime::Stream stream, runtime::Event event,
@@ -118,6 +123,13 @@ runtime::Error EventDestroy(runtime::Event event);
 runtime::Error EventElapsedTime(float* ms, runtime::Event start,
                                 runtime::Event end);
 ```
+
+Priority stream APIs are exposed when the Hygon backend is enabled. Lower
+numeric values request higher priority; query the device range instead of
+assuming a particular range. These calls use the existing DTK runtime and
+preserve its status and clamping behavior. Other backends return an unsupported
+status. A successful call reports configuration support, not guaranteed kernel
+preemption or a latency improvement under contention.
 
 ## Graph Capture and Replay Functions
 
