@@ -296,6 +296,7 @@ class _Function:
     return_type: str
     name: str
     params: tuple[_Param, ...]
+    allow_unsupported: bool = False
 
     def signature(self):
         return f"{self.return_type} {self.name}({self.params_decl()})"
@@ -381,6 +382,28 @@ _PUBLIC_RUNTIME_FUNCTIONS = (
         ),
     ),
     _Function("Error", "StreamCreate", (_Param("Stream*", "stream"),)),
+    _Function(
+        "Error",
+        "DeviceGetStreamPriorityRange",
+        (_Param("int*", "least_priority"), _Param("int*", "greatest_priority")),
+        allow_unsupported=True,
+    ),
+    _Function(
+        "Error",
+        "StreamCreateWithPriority",
+        (
+            _Param("Stream*", "stream"),
+            _Param("unsigned int", "flags"),
+            _Param("int", "priority"),
+        ),
+        allow_unsupported=True,
+    ),
+    _Function(
+        "Error",
+        "StreamGetPriority",
+        (_Param("Stream", "stream"), _Param("int*", "priority")),
+        allow_unsupported=True,
+    ),
     _Function("Error", "StreamDestroy", (_Param("Stream", "stream"),)),
     _Function("Error", "StreamSynchronize", (_Param("Stream", "stream"),)),
     _Function(
@@ -516,12 +539,16 @@ def _dispatch_cases(devices, function):
 
 
 def _write_runtime_dispatch_function(function, devices):
+    unsupported = '  assert(false && "unsupported runtime device type");'
+    if function.allow_unsupported:
+        unsupported = ""
+
     return f"""{function.signature()} {{
   switch (infini::rt::runtime_device_type()) {{
 {_dispatch_cases(devices, function)}
   }}
 
-  assert(false && "unsupported runtime device type");
+{unsupported}
   return InvalidValueError();
 }}
 """

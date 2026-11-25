@@ -92,6 +92,19 @@ struct Runtime<Device::Type::kHygon>
     return cudaStreamCreate(std::forward<decltype(args)>(args)...);
   };
 
+  static constexpr auto DeviceGetStreamPriorityRange = [](auto&&... args) {
+    return cudaDeviceGetStreamPriorityRange(
+        std::forward<decltype(args)>(args)...);
+  };
+
+  static constexpr auto StreamCreateWithPriority = [](auto&&... args) {
+    return cudaStreamCreateWithPriority(std::forward<decltype(args)>(args)...);
+  };
+
+  static constexpr auto StreamGetPriority = [](auto&&... args) {
+    return cudaStreamGetPriority(std::forward<decltype(args)>(args)...);
+  };
+
   static constexpr auto StreamDestroy = [](auto&&... args) {
     return cudaStreamDestroy(std::forward<decltype(args)>(args)...);
   };
